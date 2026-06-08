@@ -1,6 +1,8 @@
 # North Star Support Bot
 
-North Star Support Bot is a simple **AI-assisted customer support chatbot** for a simulated outdoor apparel and camping gear e-commerce business. It runs entirely in the browser with HTML, CSS, and vanilla JavaScript. No backend, deployment, external API, or API key is required.
+North Star Support Bot is a simple **AI-assisted customer support chatbot** for a simulated outdoor apparel and camping gear e-commerce business. It runs entirely in the browser with HTML, CSS, and vanilla JavaScript. No backend, external API, or API key is required.
+
+**Live Website:** https://devinxdavid.github.io/north-star-support-bot/
 
 The chatbot helps customers with order tracking, returns and exchanges, product category recommendations, simulated human handoff, and fallback support when the bot does not understand a request.
 
