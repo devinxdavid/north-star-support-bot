@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>North Star Support Bot</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <main class="app-shell" aria-label="North Star Support Bot demo">
+    <section class="hero-panel">
+      <p class="eyebrow">Outdoor support demo</p>
+      <h1>North Star Support Bot</h1>
+      <p class="hero-copy">
+        A simple AI-assisted customer support chatbot for a simulated outdoor apparel and camping gear e-commerce business.
+      </p>
+      <div class="policy-card" aria-label="Demo data boundaries">
+        <h2>Mock data only</h2>
+        <p>
+          This chatbot uses structured business rules and simulated intent recognition. It does not access real customers, live orders, or external systems.
+        </p>
+      </div>
+      <ul class="feature-list" aria-label="Supported support options">
+        <li>Order tracking</li>
+        <li>Returns and exchanges</li>
+        <li>Product recommendations</li>
+        <li>Human handoff</li>
+      </ul>
+    </section>
+
+    <section class="chat-card" aria-label="Chatbot interface">
+      <header class="chat-header">
+        <div class="bot-avatar" aria-hidden="true">NS</div>
+        <div>
+          <h2>North Star Support Bot</h2>
+          <p>Friendly, helpful, outdoorsy, concise</p>
+        </div>
+      </header>
+
+      <div id="chatMessages" class="chat-messages" aria-live="polite"></div>
+
+      <div id="quickOptions" class="quick-options" aria-label="Quick support options"></div>
+
+      <form id="chatForm" class="chat-form" autocomplete="off">
+        <label class="sr-only" for="userInput">Type your message</label>
+        <input
+          id="userInput"
+          name="userInput"
+          type="text"
+          placeholder="Ask about an order, return, gear, or live support..."
+          aria-label="Type your message"
+          required
+        />
+        <button type="submit">Send</button>
+      </form>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
+ ү харахад: code contains NS initials. Next write CSS. Need one tool. (Could write all via shell cat but instruction prefer file. Need multiple calls).  Wait tool returned? It didn't show output? It ended? Need result observation? It may not have shown, but okay. Continue.}      // malformed? I included stray analysis in JSON? Actually message had JSON with text ending includes 
