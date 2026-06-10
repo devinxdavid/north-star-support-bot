@@ -28,10 +28,8 @@ NORTH STAR RETURN POLICY:
 
 const SHIPPING_INFO = `
 NORTH STAR SHIPPING INFORMATION:
-- Standard Shipping: 3–5 business days — FREE on orders over $75, otherwise $6.99.
-- Expedited Shipping: 1–2 business days — $14.99.
-- Overnight Shipping: next business day — $29.99 (order by 1 PM ET).
-- International Shipping: available to Canada and Mexico only — $19.99 flat rate, 10–14 business days.
+- Standard Shipping: 3–5 business days.
+- Expedited Shipping: 1–2 business days.
 - Orders placed before 2 PM ET ship same day (Mon–Fri, excluding holidays).
 - Tracking numbers are emailed within 24 hours of shipment.
 `.trim();
