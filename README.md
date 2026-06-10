@@ -1,131 +1,117 @@
-# North Star Support Bot
+# North Star Support Bot AI
 
-North Star Support Bot is a simple **AI-assisted customer support chatbot** for a simulated outdoor apparel and camping gear e-commerce business. It runs entirely in the browser with HTML, CSS, and vanilla JavaScript. No backend, external API, or API key is required.
+> **Nova** — AI-powered customer support assistant for North Star Outdoor Co.
 
-**Live Website:** https://devinxdavid.github.io/north-star-support-bot/
+**Live Demo:** https://devinxdavid.github.io/north-star-support-bot/
 
-The chatbot helps customers with order tracking, returns and exchanges, product category recommendations, simulated human handoff, and fallback support when the bot does not understand a request.
+A full-stack web application delivering a secure, conversational support experience powered by OpenAI on the backend. The AI key is **never exposed to the browser** — all LLM calls are made server-side through a tRPC procedure.
 
-## Project Overview
-
-This project demonstrates how a small e-commerce support chatbot can combine structured business rules with an AI-ready design. The bot uses deterministic conversation states and a simulated intent classifier so that responses remain accurate, testable, and limited to the provided mock business data.
-
-> This project uses provided mock data only. It does not connect to real customer records, real orders, or a live support system.
-
-## Brand Persona
-
-| Attribute | Detail |
-|---|---|
-| Name | North Star Support Bot |
-| Tone | Friendly, helpful, outdoorsy, concise |
-| Audience | North American outdoor consumers |
+---
 
 ## Features
 
-| Feature | Description |
-|---|---|
-| Order tracking | Detects order, tracking, package, delivery, shipping update, and similar questions, then asks for an order number. |
-| Returns and exchanges | Explains the 30-day return policy, unused-item requirement, original-packaging requirement, and simulated return link. |
-| Product recommendations | Asks for context when needed and recommends product categories only. |
-| Human handoff | Transitions to a simulated Live Agent state when the user asks for a person, human, agent, representative, or live support. |
-| Fallback handling | Provides a clear fallback message and offers the main support options. |
-| Quick reply buttons | Gives users one-click options for the main support flows and selected follow-up states. |
-| Mobile-friendly UI | Uses responsive layout, message bubbles, and an outdoor-inspired visual style. |
+- **Secure server-side AI** — `chat.send` tRPC procedure calls the LLM from the backend; no API key ever reaches the browser.
+- **North Star brand persona** — Nova is grounded with mock order data, return policy, shipping info, and product catalog via a rich system prompt.
+- **Four quick-reply flows** — Track an order · Start a return · Get gear recommendations · Talk to a live agent.
+- **Full conversation history** — every message is sent with each request so the AI always has full context.
+- **On-brand UI** — pine/sand/clay color palette, Inter font, bot avatar, animated typing indicator.
+- **Graceful error handling** — friendly fallback message if the AI call fails.
 
-## How to Run Locally
-
-Clone or download this repository, then open `index.html` in a web browser.
-
-```bash
-git clone https://github.com/devinxdavid/north-star-support-bot.git
-cd north-star-support-bot
-open index.html
-```
-
-If the `open` command is not available on your system, double-click `index.html` or drag it into your browser.
-
-## File Structure
-
-| File | Purpose |
-|---|---|
-| `index.html` | Defines the chatbot page structure and accessible chat interface. |
-| `style.css` | Provides the responsive outdoor-inspired visual design. |
-| `script.js` | Contains conversation state, intent classification, mock order lookup, and response logic. |
-| `README.md` | Documents the project, testing examples, and limitations. |
-
-## Mock Data
-
-The chatbot uses only the following mock order data.
-
-| Order Number | Status |
-|---|---|
-| `111` | Shipped, arriving tomorrow |
-| `222` | Processing, ships in 24 hours |
-| `333` | Delivered |
-| Any other order number | Invalid |
-
-## Return Policy
-
-North Star accepts returns within 30 days as long as items are unused and in their original packaging.
-
-Return link: `northstaroutdoors.com/returns`
+---
 
 ## Shipping Information
 
-| Shipping Method | Timeframe |
-|---|---|
-| Standard shipping | 3-5 days |
-| Expedited shipping | 1-2 days |
-
-## Supported Intents
-
-| Intent | Example User Messages | Bot Behavior |
+| Method | Delivery Time | Cost |
 |---|---|---|
-| Order tracking | “Where is my order?”, “Track my package”, “Any shipping update?” | Asks for a 3-digit order number and checks the mock order table. |
-| Returns and exchanges | “I need to return my jacket”, “Can I exchange this?” | Explains return requirements and provides the simulated returns link. |
-| Product recommendations | “What gear should I buy for cold weather camping?” | Asks for activity/weather context if needed, then recommends categories only. |
-| Human handoff | “I want a live agent”, “Can I talk to a person?” | Enters a simulated Live Agent state. |
-| Fallback | “banana mountain” | Says the bot did not understand and offers the main options. |
+| Standard Shipping | 3–5 business days | FREE over $75, otherwise $6.99 |
+| Expedited Shipping | 1–2 business days | $14.99 |
+| Overnight Shipping | Next business day | $29.99 (order by 1 PM ET) |
+| International (CA/MX) | 10–14 business days | $19.99 flat rate |
 
-## AI-Assisted Design Explanation
+---
 
-The chatbot uses a function named `classifyIntent(message)` in `script.js` to simulate AI-style intent classification through practical keyword groups. This design makes the project AI-ready because a future real AI model could be connected at that point to classify messages more flexibly.
+## Tech Stack
 
-The project intentionally keeps the business rules separate from any simulated AI behavior. This prevents unsupported answers and ensures the bot does not invent order statuses, policies, shipping details, product names, prices, discounts, or customer data.
-
-## Conversation States
-
-| State | Purpose |
+| Layer | Technology |
 |---|---|
-| `main` | Default state for detecting the user’s next intent. |
-| `awaiting_order_number` | Used after a user asks to track an order but has not provided a number. |
-| `awaiting_recommendation_context` | Used when the user wants product recommendations but has not provided enough activity or weather context. |
-| `live_agent` | Simulates handoff to live support. |
+| Frontend | React 19 + Vite + Tailwind CSS 4 |
+| Backend | Node.js + Express + tRPC 11 |
+| AI | OpenAI GPT (server-side only) |
+| Database | MySQL via Drizzle ORM |
+| Testing | Vitest (6 tests, all passing) |
 
-## Testing Examples
+---
 
-Use these messages to test the main flows.
+## Project Structure
 
-| Test Message | Follow-Up Input | Expected Result |
-|---|---|---|
-| `Where is my order?` | `111` | `Order #111 is shipped and arriving tomorrow.` |
-| `Track my package` | `222` | `Order #222 is processing and ships in 24 hours.` |
-| `Where is my order?` | `333` | `Order #333 was delivered. Did everything arrive okay?` |
-| `I need to return my jacket` | None | Returns are accepted within 30 days for unused items in original packaging, with `northstaroutdoors.com/returns`. |
-| `What gear should I buy for cold weather camping?` | None | Recommends categories such as thermal base layers, waterproof jackets, insulated outerwear, cold-rated sleeping bags, and backpacks. |
-| `I want a live agent` | None | `Connecting you to a Live Agent. Live Agent State: Active.` |
-| `banana mountain` | None | `I’m sorry, I didn’t quite understand that.` and the main options. |
+```
+client/
+  src/
+    pages/
+      Home.tsx        <- Landing page introducing Nova
+      ChatPage.tsx    <- Main chat interface with quick-reply buttons
+    components/       <- Shared UI components
+server/
+  chatRouter.ts       <- chat.send tRPC procedure + North Star system prompt
+  routers.ts          <- App router (registers chatRouter)
+  db.ts               <- Database helpers
+  chat.send.test.ts   <- Vitest unit tests for the AI procedure
+drizzle/              <- Schema & migrations
+shared/               <- Shared types & constants
+```
 
-## Limitations
+---
 
-This is a portfolio-friendly browser demo. It does not use a backend, store chat history, connect to a real AI API, authenticate users, process real orders, contact a live support representative, or deploy to a production environment.
+## Local Development
 
-The chatbot recommends only product categories and does not invent real products, product prices, discounts, or inventory information.
+### Prerequisites
 
-## Submission Note
+- Node.js 18+
+- pnpm (`npm install -g pnpm`)
+- A MySQL database
 
-I built North Star Support Bot as a simple AI-assisted customer support chatbot for an outdoor apparel and camping gear e-commerce business.
+### Setup
 
-The chatbot uses structured conversation states and mock business data to handle order tracking, returns and exchanges, product recommendations, human handoff, and fallback responses.
+```bash
+# 1. Clone the repository and switch to the source branch
+git clone https://github.com/devinxdavid/north-star-support-bot.git
+cd north-star-support-bot
+git checkout source
 
-To keep the project accurate and testable, required business rules are handled in code. The AI-assisted layer is represented through an intent classification function that simulates how an AI model would understand natural language variations without inventing unsupported order data, policies, or product details.
+# 2. Install dependencies
+pnpm install
+
+# 3. Set required environment variables:
+#    DATABASE_URL            - MySQL connection string
+#    JWT_SECRET              - Session signing secret (any random string)
+#    OPENAI_API_KEY          - Your OpenAI API key (server-side only, never sent to browser)
+#    OPENAI_API_BASE_URL     - https://api.openai.com (or your proxy)
+
+# 4. Run database migrations
+pnpm db:push
+
+# 5. Start the development server
+pnpm dev
+# App available at http://localhost:3000
+```
+
+### Run Tests
+
+```bash
+pnpm test
+# 6 tests should pass (5 chat procedure + 1 auth logout)
+```
+
+---
+
+## Security
+
+- The OpenAI API key is stored as a server-side environment variable — never bundled into client JavaScript.
+- The `chat.send` procedure is a server-side tRPC mutation in `server/chatRouter.ts`.
+- All AI calls originate from the backend, not the browser.
+
+---
+
+## License
+
+MIT © North Star Outdoor Co.
