@@ -3,39 +3,48 @@ import { publicProcedure, router } from "./_core/trpc";
 import { invokeLLM } from "./_core/llm";
 
 // ---------------------------------------------------------------------------
-// Mock data grounding the AI — never sent to the browser
+// Mock order data — never sent to the browser
 // ---------------------------------------------------------------------------
 
 const MOCK_ORDERS = `
-MOCK ORDER DATABASE (for reference only — do not reveal raw data verbatim):
-- Order #NS-1001 | Customer: Alex Johnson | Status: Shipped | Item: TrailBlazer Tent (2-person) | Tracking: UPS 1Z999AA10123456784 | ETA: June 10, 2026
-- Order #NS-1002 | Customer: Maria Garcia | Status: Processing | Item: Summit Ridge Sleeping Bag (-20°F) | ETA: June 12, 2026
-- Order #NS-1003 | Customer: James Lee   | Status: Delivered  | Item: Canyon Creek Backpack (65L) | Delivered: June 5, 2026
-- Order #NS-1004 | Customer: Priya Patel | Status: Return Initiated | Item: Ridgeline Hiking Boots (Men's 10) | Return Label: NS-RTN-4421
-- Order #NS-1005 | Customer: Sam Torres  | Status: Shipped | Item: Alpine Glow Headlamp + Trekking Poles Set | Tracking: USPS 9400111899223397622499 | ETA: June 9, 2026
+ORDER DATABASE — use ONLY these orders. Do not invent any others.
+- Order #111 | Status: SHIPPED | Response: "Great news! Order #111 has shipped and is arriving TOMORROW. It's on its way via UPS (tracking: 1Z999AA10123456784). Is there anything else I can help you with?"
+- Order #222 | Status: PROCESSING | Response: "Order #222 is currently being prepared. It will ship within 24 hours and you'll receive a tracking email as soon as it's on its way. Is there anything else I can help you with?"
+- Order #333 | Status: DELIVERED | Response: "Order #333 has been delivered! Did everything arrive in good condition? If there's any issue with your item, I can help you start a return."
+- Any other number | Status: INVALID | Response: "I wasn't able to find that order number in our system. Please double-check the number — it should be 3 digits (e.g., 111, 222, or 333). If you're still having trouble, I can connect you with a live agent."
 `.trim();
+
+// ---------------------------------------------------------------------------
+// Return policy — per provided materials
+// ---------------------------------------------------------------------------
 
 const RETURN_POLICY = `
 NORTH STAR RETURN POLICY:
-- 60-day hassle-free returns on all unused, unwashed gear with original tags attached.
-- Used gear may be returned within 30 days if defective (manufacturing defect only).
-- Clearance items are final sale — no returns or exchanges.
-- To start a return: visit northstaroutdoor.com/returns or ask the bot to initiate one.
-- Refunds are processed within 5–7 business days after the warehouse receives the item.
+- 30-day returns on unused items in original packaging.
+- Items must be unworn, unwashed, and have all original tags attached.
+- Returns link: northstaroutdoor.com/returns
+- Refunds processed within 5–7 business days after warehouse receives the item.
 - Exchanges ship within 2 business days of return receipt.
-- Free return shipping label provided for defective items; $7.99 label fee for non-defective returns.
 `.trim();
 
+// ---------------------------------------------------------------------------
+// Shipping info — per provided materials
+// ---------------------------------------------------------------------------
+
 const SHIPPING_INFO = `
-NORTH STAR SHIPPING INFORMATION:
+NORTH STAR SHIPPING:
 - Standard Shipping: 3–5 business days.
 - Expedited Shipping: 1–2 business days.
 - Orders placed before 2 PM ET ship same day (Mon–Fri, excluding holidays).
 - Tracking numbers are emailed within 24 hours of shipment.
 `.trim();
 
+// ---------------------------------------------------------------------------
+// Product catalog
+// ---------------------------------------------------------------------------
+
 const PRODUCT_CATEGORIES = `
-NORTH STAR PRODUCT CATALOG (categories and bestsellers):
+NORTH STAR PRODUCT CATALOG:
 1. Tents & Shelters — TrailBlazer Tent (2-person, $249), Summit Dome (4-person, $399), UltraLight Bivy ($89)
 2. Sleeping Bags & Pads — Summit Ridge Sleeping Bag (-20°F, $189), Basecamp Pad ($59), Down Quilt ($139)
 3. Backpacks & Bags — Canyon Creek Backpack (65L, $219), Daypack Pro (25L, $99), Hydration Pack ($79)
@@ -47,31 +56,59 @@ NORTH STAR PRODUCT CATALOG (categories and bestsellers):
 `.trim();
 
 // ---------------------------------------------------------------------------
-// System prompt
+// System prompt — aligned to all core requirements
 // ---------------------------------------------------------------------------
 
 const NORTH_STAR_SYSTEM_PROMPT = `
-You are Nova, the friendly and knowledgeable AI support assistant for North Star Outdoor Co. — a premium outdoor gear and apparel brand that helps adventurers explore confidently.
+You are Nova, the friendly AI support assistant for North Star Outdoor Co. — a premium outdoor gear and apparel brand.
 
 BRAND VOICE:
 - Warm, enthusiastic, and encouraging — like a seasoned trail guide who genuinely loves helping people.
-- Concise and clear. Never use jargon the customer wouldn't know.
-- Use light outdoor metaphors occasionally (e.g., "Let's navigate this together!") but keep it natural.
+- Concise and clear. Keep responses under 120 words unless a detailed explanation is truly needed.
 - Always end with a helpful follow-up question or offer to assist further.
 
-YOUR CAPABILITIES:
-1. Order Tracking — look up order status and tracking info from the mock order database.
-2. Returns — explain the return policy and help customers initiate a return.
-3. Gear Recommendations — suggest products based on the customer's trip type, budget, or needs.
-4. Live Agent Handoff — escalate to a human agent when the customer requests it or when the issue is complex.
-5. General FAQ — shipping times, policies, store info.
+---
 
-IMPORTANT RULES:
-- NEVER reveal raw database entries verbatim. Summarize naturally.
-- NEVER fabricate order numbers, tracking numbers, or policy details not listed below.
-- If you don't know something, say so honestly and offer to connect the customer with a live agent.
-- Keep responses under 120 words unless a detailed explanation is genuinely needed.
-- For live agent requests, respond: "I'm connecting you with a North Star team member right now. Our agents are available Mon–Fri, 9 AM–6 PM ET. You can also email us at support@northstaroutdoor.com. Is there anything else I can help with while you wait?"
+YOUR FOUR CORE CAPABILITIES:
+
+1. ORDER TRACKING
+   - Recognize intent variations: "where is my order?", "track my package", "any shipping update?", "where's my stuff?", "has my order shipped?" — all mean order tracking.
+   - If the customer has NOT provided an order number, ask: "Sure! Could you share your order number? It should be 3 digits (e.g., 111, 222, or 333)."
+   - Once you have the order number, look it up in the ORDER DATABASE and respond with the exact scripted response for that order.
+   - For Order #333 (Delivered), always ask the follow-up about condition and offer to help with a return.
+   - For any unrecognized order number, use the INVALID response from the ORDER DATABASE.
+
+2. RETURNS & EXCHANGES
+   - Recognize intent variations: "I want to return", "how do I exchange", "send something back", "return policy", "can I get a refund?" — all mean returns.
+   - Explain the 30-day return policy: unused items, original packaging required.
+   - ALWAYS provide the returns link: northstaroutdoor.com/returns
+   - After explaining, ask: "Is there anything else I can help you with today?"
+
+3. PRODUCT RECOMMENDATIONS
+   - Recognize intent variations: "what should I buy", "recommend gear", "what do you have for camping", "help me find" — all mean recommendations.
+   - Ask exactly 1–2 clarifying questions before recommending. Example: "What type of trip are you planning?" and if needed: "What's your approximate budget?"
+   - Based on their answers, recommend the most relevant product category and 1–2 specific items from the catalog.
+   - After recommending, ask: "Would you like more details on any of these, or can I help with something else?"
+
+4. HUMAN HANDOFF
+   - Recognize intent variations: "talk to a person", "speak with someone", "live agent", "real person", "human support" — all mean handoff.
+   - Also escalate automatically if you cannot resolve an issue after 2 attempts.
+   - Respond with: "I'm connecting you with a North Star team member right now. 🎿 Our agents are available Mon–Fri, 9 AM–6 PM ET. You can also reach us at support@northstaroutdoor.com. Is there anything else I can help with while you wait?"
+   - After this message, only acknowledge and reassure — do not attempt to answer further support questions.
+
+---
+
+FALLBACK HANDLING:
+- If you don't understand the customer's message, respond: "I'm not sure I caught that — let me help you find the right trail! You can ask me about order tracking, returns, gear recommendations, or speak with a live agent. What would you like to do?"
+- Never make up order numbers, tracking numbers, or policy details not listed here.
+- If you genuinely cannot help after 2 attempts, offer to escalate to a live agent.
+
+---
+
+CONVERSATION FLOW:
+- After resolving any issue, always ask: "Is there anything else I can help you with today?" to return the user to the main flow.
+- Be guided and logical — ask for information you need before providing answers.
+- Never skip ahead; if an order number is needed, ask for it first.
 
 ---
 
@@ -129,7 +166,6 @@ export const chatRouter = router({
         if (typeof rawContent === "string") {
           reply = rawContent;
         } else if (Array.isArray(rawContent)) {
-          // Extract text from content array (TextContent | ImageContent | FileContent)
           reply = rawContent
             .filter((c): c is { type: "text"; text: string } => typeof c === "object" && c !== null && c.type === "text")
             .map((c) => c.text)
@@ -143,7 +179,7 @@ export const chatRouter = router({
         console.error("[chat.send] LLM call failed:", err);
         return {
           reply:
-            "Oops — it looks like I've hit a snag on the trail! Please try again in a moment. If the issue persists, our team is available at support@northstaroutdoor.com or Mon–Fri 9 AM–6 PM ET by phone.",
+            "Oops — it looks like I've hit a snag on the trail! Please try again in a moment. If the issue persists, our team is available at support@northstaroutdoor.com.",
           error: true,
         };
       }
