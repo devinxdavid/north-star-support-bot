@@ -1,0 +1,6 @@
+name = "north-star-support-bot"
+main = "worker.js"
+compatibility_date = "2024-01-01"
+
+# Secrets (set via CLI, never stored here):
+#   wrangler secret put OPENAI_API_KEY
