@@ -1,64 +1,497 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
   <title>North Star Support Bot</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --pine-900: #0f241f;
+      --pine-800: #16352d;
+      --pine-700: #21483d;
+      --pine-600: #2f6f5e;
+      --pine-500: #3d8f78;
+      --pine-400: #5aab94;
+      --pine-100: #e9f2f4;
+      --pine-50:  #f2f8f7;
+      --sand-50:  #faf7f2;
+      --sand-100: #f7f1e7;
+      --sand-200: #ede4d3;
+      --sand-400: #c9b896;
+      --sand-700: #8a7a60;
+      --clay-700: #8b3a1a;
+      --clay-500: #b66d42;
+      --clay-300: #d4956e;
+      --clay-100: #fdf0ea;
+    }
+
+    html, body {
+      height: 100%;
+      font-family: "Inter", system-ui, -apple-system, sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(184,199,162,0.45), transparent 30%),
+        linear-gradient(135deg, var(--pine-900) 0%, var(--pine-700) 46%, var(--sand-400) 100%);
+      min-height: 100vh;
+      color: var(--pine-900);
+    }
+
+    /* ── Layout shell ── */
+    .ns-shell {
+      width: min(1180px, calc(100% - 32px));
+      min-height: 100vh;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 0.9fr 1.1fr;
+      gap: 28px;
+      align-items: center;
+      padding: 32px 0;
+    }
+
+    /* ── Hero panel ── */
+    .ns-hero { color: var(--sand-100); padding: 36px; }
+    .ns-eyebrow {
+      margin: 0 0 14px;
+      color: #b8c7a2;
+      font-size: 0.8rem;
+      font-weight: 800;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+    }
+    .ns-hero h1 {
+      font-size: clamp(2.4rem, 6vw, 5rem);
+      line-height: 0.95;
+      letter-spacing: -0.055em;
+    }
+    .ns-hero-copy {
+      max-width: 620px;
+      margin: 24px 0 0;
+      color: rgba(247,241,231,0.88);
+      font-size: 1.08rem;
+      line-height: 1.65;
+    }
+    .ns-policy-card {
+      margin-top: 34px;
+      padding: 22px;
+      border: 1px solid rgba(247,241,231,0.2);
+      border-radius: 20px;
+      background: rgba(255,255,255,0.08);
+      backdrop-filter: blur(12px);
+    }
+    .ns-policy-card h2 { margin: 0 0 8px; font-size: 1rem; }
+    .ns-policy-card p { margin: 0; color: rgba(247,241,231,0.82); line-height: 1.55; }
+    .ns-feature-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin: 24px 0 0;
+      padding: 0;
+      list-style: none;
+    }
+    .ns-feature-list li {
+      padding: 10px 13px;
+      border-radius: 999px;
+      background: rgba(247,241,231,0.13);
+      color: var(--sand-100);
+      font-size: 0.88rem;
+      font-weight: 700;
+    }
+
+    /* ── Chat card ── */
+    .ns-chat-card {
+      height: min(760px, calc(100vh - 48px));
+      min-height: 620px;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.5);
+      border-radius: 28px;
+      background: rgba(255,255,255,0.92);
+      box-shadow: 0 24px 70px rgba(14,31,27,0.24);
+    }
+
+    /* Header */
+    .ns-chat-header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 22px;
+      background: linear-gradient(135deg, var(--sand-100), var(--pine-100));
+      border-bottom: 1px solid rgba(22,53,45,0.1);
+      flex-shrink: 0;
+    }
+    .ns-bot-avatar {
+      width: 54px;
+      height: 54px;
+      display: grid;
+      place-items: center;
+      flex: 0 0 auto;
+      border-radius: 18px;
+      background: linear-gradient(135deg, var(--pine-800), var(--pine-600));
+      color: var(--sand-100);
+      font-weight: 900;
+      font-size: 1.3rem;
+      box-shadow: 0 12px 28px rgba(47,111,94,0.28);
+      user-select: none;
+    }
+    .ns-chat-header h2 { font-size: 1.05rem; color: var(--pine-900); }
+    .ns-chat-header p { margin: 4px 0 0; color: var(--sand-700); font-size: 0.9rem; }
+
+    /* Messages */
+    .ns-messages {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      overflow-y: auto;
+      padding: 24px;
+      background:
+        linear-gradient(rgba(247,241,231,0.72), rgba(247,241,231,0.72)),
+        repeating-linear-gradient(135deg, rgba(47,111,94,0.04) 0 2px, transparent 2px 18px);
+    }
+    .message-row { display: flex; }
+    .message-row.user { justify-content: flex-end; }
+    .message-bubble {
+      width: fit-content;
+      max-width: min(78%, 560px);
+      padding: 14px 16px;
+      border-radius: 18px;
+      line-height: 1.5;
+      font-size: 0.95rem;
+      white-space: pre-wrap;
+    }
+    .message-row.bot .message-bubble {
+      border-bottom-left-radius: 6px;
+      background: #ffffff;
+      color: var(--pine-900);
+      box-shadow: 0 10px 30px rgba(15,36,31,0.08);
+    }
+    .message-row.user .message-bubble {
+      border-bottom-right-radius: 6px;
+      background: var(--pine-700);
+      color: var(--sand-100);
+    }
+    .message-bubble.error {
+      background: var(--clay-100);
+      border: 1px solid var(--clay-300);
+      color: var(--clay-700);
+    }
+
+    /* Typing indicator */
+    .typing-dot {
+      display: inline-block;
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: var(--pine-500);
+      animation: ns-bounce 1.2s ease-in-out infinite;
+    }
+    .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+    .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+    @keyframes ns-bounce {
+      0%, 80%, 100% { transform: translateY(0); opacity: 0.5; }
+      40%            { transform: translateY(-6px); opacity: 1; }
+    }
+    .typing-bubble {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      padding: 14px 16px;
+      background: #fff;
+      border-radius: 18px;
+      border-bottom-left-radius: 6px;
+      box-shadow: 0 10px 30px rgba(15,36,31,0.08);
+      width: fit-content;
+    }
+
+    /* Quick replies */
+    .ns-quick-options {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 9px;
+      padding: 16px 20px 4px;
+      background: rgba(255,255,255,0.92);
+      flex-shrink: 0;
+    }
+    .ns-quick-options button {
+      border: 1px solid rgba(47,111,94,0.22);
+      border-radius: 999px;
+      padding: 10px 12px;
+      background: var(--sand-100);
+      color: var(--pine-800);
+      cursor: pointer;
+      font-size: 0.9rem;
+      font-weight: 700;
+      font-family: inherit;
+      transition: transform 160ms ease, background 160ms ease, border-color 160ms ease;
+    }
+    .ns-quick-options button:hover,
+    .ns-quick-options button:focus-visible {
+      transform: translateY(-1px);
+      border-color: var(--pine-600);
+      background: var(--pine-100);
+      outline: none;
+    }
+
+    /* Input form */
+    .ns-chat-form {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 10px;
+      padding: 18px 20px 20px;
+      background: rgba(255,255,255,0.92);
+      flex-shrink: 0;
+    }
+    .ns-chat-form input {
+      width: 100%;
+      min-height: 50px;
+      border: 1px solid rgba(22,53,45,0.16);
+      border-radius: 14px;
+      padding: 0 15px;
+      background: #fff;
+      color: var(--pine-900);
+      outline: none;
+      font-family: inherit;
+      font-size: 0.95rem;
+      transition: border-color 150ms, box-shadow 150ms;
+    }
+    .ns-chat-form input:focus {
+      border-color: var(--pine-600);
+      box-shadow: 0 0 0 4px rgba(47,111,94,0.12);
+    }
+    .ns-chat-form input:disabled { opacity: 0.6; cursor: not-allowed; }
+    .ns-send-btn {
+      min-height: 50px;
+      border: 0;
+      border-radius: 14px;
+      padding: 0 20px;
+      background: var(--clay-500);
+      color: #fff;
+      cursor: pointer;
+      font-weight: 800;
+      font-family: inherit;
+      font-size: 0.95rem;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: transform 160ms ease, filter 160ms ease;
+    }
+    .ns-send-btn:hover:not(:disabled),
+    .ns-send-btn:focus-visible:not(:disabled) {
+      transform: translateY(-1px);
+      filter: brightness(0.96);
+      outline: none;
+    }
+    .ns-send-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    /* Send icon SVG */
+    .send-icon { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
+
+    /* Responsive */
+    @media (max-width: 900px) {
+      .ns-shell { grid-template-columns: 1fr; align-items: start; }
+      .ns-hero { padding: 24px 8px 0; }
+      .ns-chat-card { height: 720px; min-height: 580px; }
+    }
+    @media (max-width: 560px) {
+      .ns-shell { width: min(100% - 18px, 1180px); padding: 10px 0; }
+      .ns-hero h1 { font-size: 2.35rem; }
+      .ns-hero-copy, .ns-policy-card, .ns-feature-list { display: none; }
+      .ns-chat-card { height: calc(100vh - 190px); min-height: 560px; border-radius: 22px; }
+      .ns-chat-header, .ns-messages { padding: 18px; }
+      .message-bubble { max-width: 88%; }
+      .ns-quick-options { padding: 12px 16px 2px; }
+      .ns-chat-form { grid-template-columns: 1fr; padding: 14px 16px 16px; }
+    }
+  </style>
 </head>
 <body>
-  <main class="app-shell" aria-label="North Star Support Bot demo">
-    <section class="hero-panel">
-      <p class="eyebrow">Outdoor support demo</p>
+  <div class="ns-shell">
+    <!-- Hero panel -->
+    <section class="ns-hero" aria-label="North Star Support Bot">
+      <p class="ns-eyebrow">AI-powered support</p>
       <h1>North Star Support Bot</h1>
-      <p class="hero-copy">
-        A simple AI-assisted customer support chatbot for a simulated outdoor apparel and camping gear e-commerce business.
+      <p class="ns-hero-copy">
+        Meet Nova — your AI-powered support guide for North Star Outdoor Co. Track orders, start returns, discover gear, or reach a live agent. All in one conversation.
       </p>
-      <div class="policy-card" aria-label="Demo data boundaries">
-        <h2>Mock data only</h2>
-        <p>
-          This chatbot uses structured business rules and simulated intent recognition. It does not access real customers, live orders, or external systems.
-        </p>
+      <div class="ns-policy-card">
+        <h2>Powered by OpenAI</h2>
+        <p>Nova uses a secure server-side AI layer. Your API key is never exposed to the browser — all intelligence runs on the backend.</p>
       </div>
-      <ul class="feature-list" aria-label="Supported support options">
+      <ul class="ns-feature-list">
         <li>Order tracking</li>
-        <li>Returns and exchanges</li>
-        <li>Product recommendations</li>
-        <li>Human handoff</li>
+        <li>Returns &amp; exchanges</li>
+        <li>Gear recommendations</li>
+        <li>Live agent handoff</li>
+        <li>Shipping info</li>
       </ul>
     </section>
 
-    <section class="chat-card" aria-label="Chatbot interface">
-      <header class="chat-header">
-        <div class="bot-avatar" aria-hidden="true">NS</div>
+    <!-- Chat card -->
+    <section class="ns-chat-card" aria-label="Chat with Nova">
+      <header class="ns-chat-header">
+        <div class="ns-bot-avatar" aria-hidden="true">⛰</div>
         <div>
-          <h2>North Star Support Bot</h2>
+          <h2>Nova · North Star Support</h2>
           <p>Friendly, helpful, outdoorsy, concise</p>
         </div>
       </header>
 
-      <div id="chatMessages" class="chat-messages" aria-live="polite"></div>
+      <div class="ns-messages" id="messages" aria-live="polite"></div>
 
-      <div id="quickOptions" class="quick-options" aria-label="Quick support options"></div>
+      <div class="ns-quick-options" id="quickReplies">
+        <button onclick="sendMessage('Track an order')">Track an order</button>
+        <button onclick="sendMessage('Start a return')">Start a return</button>
+        <button onclick="sendMessage('Get gear recommendations')">Get gear recommendations</button>
+        <button onclick="sendMessage('Talk to a live agent')">Talk to a live agent</button>
+      </div>
 
-      <form id="chatForm" class="chat-form" autocomplete="off">
-        <label class="sr-only" for="userInput">Type your message</label>
+      <form class="ns-chat-form" id="chatForm" autocomplete="off">
+        <label class="sr-only" for="userInput" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)">Type your message</label>
         <input
           id="userInput"
-          name="userInput"
           type="text"
           placeholder="Ask about an order, return, gear, or live support..."
           aria-label="Type your message"
-          required
         />
-        <button type="submit">Send</button>
+        <button type="submit" class="ns-send-btn" id="sendBtn">
+          <svg class="send-icon" viewBox="0 0 24 24" aria-hidden="true">
+            <line x1="22" y1="2" x2="11" y2="13"></line>
+            <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+          </svg>
+          Send
+        </button>
       </form>
     </section>
-  </main>
+  </div>
 
-  <script src="script.js"></script>
+  <script>
+    // ── Configuration ──────────────────────────────────────────────────────────
+    // Replace this URL with your deployed Cloudflare Worker URL after deployment.
+    // Example: https://north-star-support-bot.YOUR-SUBDOMAIN.workers.dev
+    const WORKER_URL = "REPLACE_WITH_YOUR_WORKER_URL";
+
+    // ── State ──────────────────────────────────────────────────────────────────
+    const conversationHistory = [];
+    let isLoading = false;
+
+    // ── DOM refs ───────────────────────────────────────────────────────────────
+    const messagesEl   = document.getElementById("messages");
+    const inputEl      = document.getElementById("userInput");
+    const sendBtn      = document.getElementById("sendBtn");
+    const quickReplies = document.getElementById("quickReplies");
+    const chatForm     = document.getElementById("chatForm");
+
+    // ── Render helpers ─────────────────────────────────────────────────────────
+    function appendMessage(role, content, isError = false) {
+      const row = document.createElement("div");
+      row.className = "message-row " + (role === "user" ? "user" : "bot");
+
+      const bubble = document.createElement("div");
+      bubble.className = "message-bubble" + (isError ? " error" : "");
+      bubble.textContent = content;
+
+      row.appendChild(bubble);
+      messagesEl.appendChild(row);
+      scrollToBottom();
+      return bubble;
+    }
+
+    function showTyping() {
+      const row = document.createElement("div");
+      row.className = "message-row bot";
+      row.id = "typing-indicator";
+
+      const bubble = document.createElement("div");
+      bubble.className = "typing-bubble";
+      for (let i = 0; i < 3; i++) {
+        const dot = document.createElement("span");
+        dot.className = "typing-dot";
+        bubble.appendChild(dot);
+      }
+
+      row.appendChild(bubble);
+      messagesEl.appendChild(row);
+      scrollToBottom();
+    }
+
+    function hideTyping() {
+      const el = document.getElementById("typing-indicator");
+      if (el) el.remove();
+    }
+
+    function scrollToBottom() {
+      messagesEl.scrollTop = messagesEl.scrollHeight;
+    }
+
+    function setLoading(val) {
+      isLoading = val;
+      inputEl.disabled = val;
+      sendBtn.disabled = val;
+    }
+
+    // ── Send message ───────────────────────────────────────────────────────────
+    async function sendMessage(text) {
+      const trimmed = (text || inputEl.value).trim();
+      if (!trimmed || isLoading) return;
+
+      // Hide quick replies after first interaction
+      quickReplies.style.display = "none";
+      inputEl.value = "";
+
+      // Add to UI and history
+      appendMessage("user", trimmed);
+      conversationHistory.push({ role: "user", content: trimmed });
+
+      setLoading(true);
+      showTyping();
+
+      try {
+        const res = await fetch(WORKER_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ messages: conversationHistory }),
+        });
+
+        const data = await res.json();
+        hideTyping();
+
+        const reply = data.reply || "I'm not sure how to answer that — please try again.";
+        appendMessage("assistant", reply, data.error === true);
+        conversationHistory.push({ role: "assistant", content: reply });
+      } catch (err) {
+        hideTyping();
+        const fallback =
+          "Oops — it looks like I've hit a snag on the trail! Please try again in a moment. If the issue persists, our team is available at support@northstaroutdoor.com.";
+        appendMessage("assistant", fallback, true);
+        conversationHistory.push({ role: "assistant", content: fallback });
+      } finally {
+        setLoading(false);
+        inputEl.focus();
+      }
+    }
+
+    // ── Event listeners ────────────────────────────────────────────────────────
+    chatForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+      sendMessage();
+    });
+
+    inputEl.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" && !e.shiftKey) {
+        e.preventDefault();
+        sendMessage();
+      }
+    });
+
+    // ── Welcome message ────────────────────────────────────────────────────────
+    appendMessage(
+      "assistant",
+      "Hey there, adventurer! 👋 I'm Nova, your North Star support guide. Whether you need to track an order, start a return, find the perfect gear, or talk to our team — I'm here to help. What can I do for you today?"
+    );
+  </script>
 </body>
 </html>
