@@ -1,131 +1,212 @@
 # North Star Support Bot
 
-North Star Support Bot is a simple **AI-assisted customer support chatbot** for a simulated outdoor apparel and camping gear e-commerce business. It runs entirely in the browser with HTML, CSS, and vanilla JavaScript. No backend, external API, or API key is required.
+> **Nova** — AI-powered customer support assistant for North Star Outdoor Co.
 
-**Live Website:** https://devinxdavid.github.io/north-star-support-bot/
+**Live Demo:** https://devinxdavid.github.io/north-star-support-bot/
 
-The chatbot helps customers with order tracking, returns and exchanges, product category recommendations, simulated human handoff, and fallback support when the bot does not understand a request.
+An AI-powered customer support chatbot with a static GitHub Pages frontend and a secure server-side AI backend. The API key is **never exposed to the browser** — all AI calls are made server-side.
 
-## Project Overview
+---
 
-This project demonstrates how a small e-commerce support chatbot can combine structured business rules with an AI-ready design. The bot uses deterministic conversation states and a simulated intent classifier so that responses remain accurate, testable, and limited to the provided mock business data.
+## Core Use Cases
 
-> This project uses provided mock data only. It does not connect to real customer records, real orders, or a live support system.
-
-## Brand Persona
-
-| Attribute | Detail |
+| Flow | Behavior |
 |---|---|
-| Name | North Star Support Bot |
-| Tone | Friendly, helpful, outdoorsy, concise |
-| Audience | North American outdoor consumers |
+| **Order Tracking** | Asks for order number → returns simulated status for #111, #222, #333 |
+| **Returns & Exchanges** | Explains 30-day return policy → provides returns link |
+| **Gear Recommendations** | Asks 1–2 clarifying questions → recommends product category |
+| **Live Agent Handoff** | Handles explicit request or fallback → transitions to "Live Agent" state |
+
+### Mock Order Logic
+
+| Order # | Status | Details |
+|---|---|---|
+| `#111` | Shipped | Arriving tomorrow — UPS tracking provided |
+| `#222` | Processing | Ships within 24 hours |
+| `#333` | Delivered | Follow-up: "Did everything arrive in good condition?" |
+| Any other | Invalid | Not found — offers live agent escalation |
+
+---
+
+## How to Test
+
+Open the **[Live Demo](https://devinxdavid.github.io/north-star-support-bot/)** and try the prompts below to verify each core flow. You can type them freely or use the quick-reply buttons.
+
+### 1. Order Tracking
+
+The bot must ask for an order number if none is provided, then return the correct simulated status.
+
+| Prompt | Expected Response |
+|---|---|
+| `Where is my order?` | Asks for your 3-digit order number |
+| `Track my package` | Asks for your 3-digit order number |
+| `111` *(after being asked)* | "Order #111 has shipped and is arriving TOMORROW" |
+| `222` | "Order #222 is processing — ships within 24 hours" |
+| `333` | "Order #333 has been delivered — did everything arrive OK?" |
+| `999` | "I wasn't able to find that order number" + offers live agent |
+
+### 2. Returns & Exchanges
+
+The bot must explain the 30-day policy and always provide the returns link.
+
+| Prompt | Expected Response |
+|---|---|
+| `I need to return something` | 30-day policy + `northstaroutdoor.com/returns` |
+| `How do I start a return?` | 30-day policy + `northstaroutdoor.com/returns` |
+| `Can I exchange a wrong size?` | 30-day policy + `northstaroutdoor.com/returns` |
+| `What is your return policy?` | 30-day policy + `northstaroutdoor.com/returns` |
+
+### 3. Product Recommendations
+
+The bot must ask **1–2 clarifying questions** before recommending a product category.
+
+| Prompt | Expected Response |
+|---|---|
+| `What gear should I buy?` | Asks what activity/conditions you're preparing for |
+| `Can you recommend something?` | Asks what activity/conditions you're preparing for |
+| `Cold weather camping` *(follow-up)* | Recommends thermal base layers, insulated outerwear, cold-rated sleeping bag |
+| `Rainy hiking` *(follow-up)* | Recommends waterproof jacket, hiking boots, backpack with rain cover |
+
+### 4. Human Handoff
+
+The bot must transition to a **"Live Agent: Active"** state.
+
+| Prompt | Expected Response |
+|---|---|
+| `I want to talk to a real person` | "Connecting you to a Live Agent" — Live Agent State: Active |
+| `Let me speak with someone` | "Connecting you to a Live Agent" — Live Agent State: Active |
+| `Live agent` | "Connecting you to a Live Agent" — Live Agent State: Active |
+
+### 5. Shipping Information
+
+| Prompt | Expected Response |
+|---|---|
+| `How long does shipping take?` | Standard: 3–5 days · Expedited: 1–2 days |
+| `What are your shipping options?` | Standard: 3–5 days · Expedited: 1–2 days |
+
+### 6. Fallback Handling
+
+The bot must respond with a clear message and offer options.
+
+| Prompt | Expected Response |
+|---|---|
+| `asdfghjkl` | "I'm not sure I caught that" + lists available options |
+| `banana helicopter` | "I'm not sure I caught that" + lists available options |
+
+---
 
 ## Features
 
-| Feature | Description |
-|---|---|
-| Order tracking | Detects order, tracking, package, delivery, shipping update, and similar questions, then asks for an order number. |
-| Returns and exchanges | Explains the 30-day return policy, unused-item requirement, original-packaging requirement, and simulated return link. |
-| Product recommendations | Asks for context when needed and recommends product categories only. |
-| Human handoff | Transitions to a simulated Live Agent state when the user asks for a person, human, agent, representative, or live support. |
-| Fallback handling | Provides a clear fallback message and offers the main support options. |
-| Quick reply buttons | Gives users one-click options for the main support flows and selected follow-up states. |
-| Mobile-friendly UI | Uses responsive layout, message bubbles, and an outdoor-inspired visual style. |
+- **Secure server-side AI** — API key stored server-side; never sent to the browser
+- **Intent recognition** — handles variations ("where's my order?", "track my package", "I want to return something")
+- **Guided conversation flows** — logical, step-by-step interactions for each use case
+- **Return to main flow** — after resolving any issue, Nova offers further assistance
+- **Fallback handling** — clear "I didn't understand" response with options or escalation
+- **Quick-reply buttons** — Track an order · Start a return · Get gear recommendations · Talk to a live agent
+- **Full conversation history** — every message sent with each request for full context
+- **Graceful error handling** — friendly fallback if the AI call fails
 
-## How to Run Locally
-
-Clone or download this repository, then open `index.html` in a web browser.
-
-```bash
-git clone https://github.com/devinxdavid/north-star-support-bot.git
-cd north-star-support-bot
-open index.html
-```
-
-If the `open` command is not available on your system, double-click `index.html` or drag it into your browser.
-
-## File Structure
-
-| File | Purpose |
-|---|---|
-| `index.html` | Defines the chatbot page structure and accessible chat interface. |
-| `style.css` | Provides the responsive outdoor-inspired visual design. |
-| `script.js` | Contains conversation state, intent classification, mock order lookup, and response logic. |
-| `README.md` | Documents the project, testing examples, and limitations. |
-
-## Mock Data
-
-The chatbot uses only the following mock order data.
-
-| Order Number | Status |
-|---|---|
-| `111` | Shipped, arriving tomorrow |
-| `222` | Processing, ships in 24 hours |
-| `333` | Delivered |
-| Any other order number | Invalid |
+---
 
 ## Return Policy
 
-North Star accepts returns within 30 days as long as items are unused and in their original packaging.
+- **30-day returns** on unused items in original packaging
+- Items must be unworn, unwashed, with all original tags attached
+- Returns portal: [northstaroutdoor.com/returns](https://northstaroutdoor.com/returns)
+- Refunds processed within 5–7 business days of warehouse receipt
 
-Return link: `northstaroutdoors.com/returns`
+---
 
 ## Shipping Information
 
-| Shipping Method | Timeframe |
+| Method | Delivery Time |
 |---|---|
-| Standard shipping | 3-5 days |
-| Expedited shipping | 1-2 days |
+| Standard Shipping | 3–5 business days |
+| Expedited Shipping | 1–2 business days |
 
-## Supported Intents
+---
 
-| Intent | Example User Messages | Bot Behavior |
-|---|---|---|
-| Order tracking | “Where is my order?”, “Track my package”, “Any shipping update?” | Asks for a 3-digit order number and checks the mock order table. |
-| Returns and exchanges | “I need to return my jacket”, “Can I exchange this?” | Explains return requirements and provides the simulated returns link. |
-| Product recommendations | “What gear should I buy for cold weather camping?” | Asks for activity/weather context if needed, then recommends categories only. |
-| Human handoff | “I want a live agent”, “Can I talk to a person?” | Enters a simulated Live Agent state. |
-| Fallback | “banana mountain” | Says the bot did not understand and offers the main options. |
+## Tech Stack
 
-## AI-Assisted Design Explanation
-
-The chatbot uses a function named `classifyIntent(message)` in `script.js` to simulate AI-style intent classification through practical keyword groups. This design makes the project AI-ready because a future real AI model could be connected at that point to classify messages more flexibly.
-
-The project intentionally keeps the business rules separate from any simulated AI behavior. This prevents unsupported answers and ensures the bot does not invent order statuses, policies, shipping details, product names, prices, discounts, or customer data.
-
-## Conversation States
-
-| State | Purpose |
+| Layer | Technology |
 |---|---|
-| `main` | Default state for detecting the user’s next intent. |
-| `awaiting_order_number` | Used after a user asks to track an order but has not provided a number. |
-| `awaiting_recommendation_context` | Used when the user wants product recommendations but has not provided enough activity or weather context. |
-| `live_agent` | Simulates handoff to live support. |
+| Frontend | React 19 + Vite + Tailwind CSS 4 |
+| Backend | Node.js + Express + tRPC 11 |
+| AI | OpenAI GPT (server-side only) |
+| Database | MySQL via Drizzle ORM |
+| Testing | Vitest (7 tests, all passing) |
 
-## Testing Examples
+---
 
-Use these messages to test the main flows.
+## Project Structure
 
-| Test Message | Follow-Up Input | Expected Result |
-|---|---|---|
-| `Where is my order?` | `111` | `Order #111 is shipped and arriving tomorrow.` |
-| `Track my package` | `222` | `Order #222 is processing and ships in 24 hours.` |
-| `Where is my order?` | `333` | `Order #333 was delivered. Did everything arrive okay?` |
-| `I need to return my jacket` | None | Returns are accepted within 30 days for unused items in original packaging, with `northstaroutdoors.com/returns`. |
-| `What gear should I buy for cold weather camping?` | None | Recommends categories such as thermal base layers, waterproof jackets, insulated outerwear, cold-rated sleeping bags, and backpacks. |
-| `I want a live agent` | None | `Connecting you to a Live Agent. Live Agent State: Active.` |
-| `banana mountain` | None | `I’m sorry, I didn’t quite understand that.` and the main options. |
+```
+client/
+  src/
+    pages/
+      Home.tsx        <- Landing page introducing Nova
+      ChatPage.tsx    <- Main chat interface with quick-reply buttons
+    components/       <- Shared UI components
+server/
+  chatRouter.ts       <- chat.send tRPC procedure + North Star system prompt
+  routers.ts          <- App router (registers chatRouter)
+  db.ts               <- Database helpers
+  chat.send.test.ts   <- Vitest unit tests for the AI procedure
+drizzle/              <- Schema & migrations
+shared/               <- Shared types & constants
+```
 
-## Limitations
+---
 
-This is a portfolio-friendly browser demo. It does not use a backend, store chat history, connect to a real AI API, authenticate users, process real orders, contact a live support representative, or deploy to a production environment.
+## Local Development
 
-The chatbot recommends only product categories and does not invent real products, product prices, discounts, or inventory information.
+### Prerequisites
 
-## Submission Note
+- Node.js 18+
+- pnpm (`npm install -g pnpm`)
+- A MySQL database
 
-I built North Star Support Bot as a simple AI-assisted customer support chatbot for an outdoor apparel and camping gear e-commerce business.
+### Setup
 
-The chatbot uses structured conversation states and mock business data to handle order tracking, returns and exchanges, product recommendations, human handoff, and fallback responses.
+```bash
+# 1. Clone the repository and switch to the source branch
+git clone https://github.com/devinxdavid/north-star-support-bot.git
+cd north-star-support-bot
+git checkout source
 
-To keep the project accurate and testable, required business rules are handled in code. The AI-assisted layer is represented through an intent classification function that simulates how an AI model would understand natural language variations without inventing unsupported order data, policies, or product details.
+# 2. Install dependencies
+pnpm install
+
+# 3. Set required environment variables:
+#    DATABASE_URL            - MySQL connection string
+#    JWT_SECRET              - Session signing secret (any random string)
+#    OPENAI_API_KEY   - Your OpenAI API key (server-side only, never sent to browser)
+
+# 4. Run database migrations
+pnpm db:push
+
+# 5. Start the development server
+pnpm dev
+# App available at http://localhost:3000
+```
+
+### Run Tests
+
+```bash
+pnpm test
+# 7 tests should pass (6 chat procedure + 1 auth logout)
+```
+
+---
+
+## Security
+
+- The OpenAI API key is stored as a server-side environment variable — never bundled into client JavaScript.
+- The `chat.send` procedure is a server-side tRPC mutation in `server/chatRouter.ts`.
+- All AI calls originate from the backend, not the browser.
+
+---
+
+## License
+
+MIT © North Star Outdoor Co.
