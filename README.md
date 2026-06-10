@@ -1,21 +1,52 @@
-# North Star Support Bot AI
+# North Star Support Bot
 
 > **Nova** — AI-powered customer support assistant for North Star Outdoor Co.
 
 **Live Demo:** https://devinxdavid.github.io/north-star-support-bot/
 
-A full-stack web application delivering a secure, conversational support experience powered by OpenAI on the backend. The AI key is **never exposed to the browser** — all LLM calls are made server-side through a tRPC procedure.
+An AI-powered customer support chatbot with a static GitHub Pages frontend and a secure server-side AI backend. The API key is **never exposed to the browser** — all AI calls are made server-side.
+
+---
+
+## Core Use Cases
+
+| Flow | Behavior |
+|---|---|
+| **Order Tracking** | Asks for order number → returns simulated status for #111, #222, #333 |
+| **Returns & Exchanges** | Explains 30-day return policy → provides returns link |
+| **Gear Recommendations** | Asks 1–2 clarifying questions → recommends product category |
+| **Live Agent Handoff** | Handles explicit request or fallback → transitions to "Live Agent" state |
+
+### Mock Order Logic
+
+| Order # | Status | Details |
+|---|---|---|
+| `#111` | Shipped | Arriving tomorrow — UPS tracking provided |
+| `#222` | Processing | Ships within 24 hours |
+| `#333` | Delivered | Follow-up: "Did everything arrive in good condition?" |
+| Any other | Invalid | Not found — offers live agent escalation |
 
 ---
 
 ## Features
 
-- **Secure server-side AI** — `chat.send` tRPC procedure calls the LLM from the backend; no API key ever reaches the browser.
-- **North Star brand persona** — Nova is grounded with mock order data, return policy, shipping info, and product catalog via a rich system prompt.
-- **Four quick-reply flows** — Track an order · Start a return · Get gear recommendations · Talk to a live agent.
-- **Full conversation history** — every message is sent with each request so the AI always has full context.
-- **On-brand UI** — pine/sand/clay color palette, Inter font, bot avatar, animated typing indicator.
-- **Graceful error handling** — friendly fallback message if the AI call fails.
+- **Secure server-side AI** — API key stored server-side; never sent to the browser
+- **Intent recognition** — handles variations ("where's my order?", "track my package", "I want to return something")
+- **Guided conversation flows** — logical, step-by-step interactions for each use case
+- **Return to main flow** — after resolving any issue, Nova offers further assistance
+- **Fallback handling** — clear "I didn't understand" response with options or escalation
+- **Quick-reply buttons** — Track an order · Start a return · Get gear recommendations · Talk to a live agent
+- **Full conversation history** — every message sent with each request for full context
+- **Graceful error handling** — friendly fallback if the AI call fails
+
+---
+
+## Return Policy
+
+- **30-day returns** on unused items in original packaging
+- Items must be unworn, unwashed, with all original tags attached
+- Returns portal: [northstaroutdoor.com/returns](https://northstaroutdoor.com/returns)
+- Refunds processed within 5–7 business days of warehouse receipt
 
 ---
 
@@ -36,7 +67,7 @@ A full-stack web application delivering a secure, conversational support experie
 | Backend | Node.js + Express + tRPC 11 |
 | AI | OpenAI GPT (server-side only) |
 | Database | MySQL via Drizzle ORM |
-| Testing | Vitest (6 tests, all passing) |
+| Testing | Vitest (7 tests, all passing) |
 
 ---
 
@@ -82,8 +113,7 @@ pnpm install
 # 3. Set required environment variables:
 #    DATABASE_URL            - MySQL connection string
 #    JWT_SECRET              - Session signing secret (any random string)
-#    OPENAI_API_KEY          - Your OpenAI API key (server-side only, never sent to browser)
-#    OPENAI_API_BASE_URL     - https://api.openai.com (or your proxy)
+#    OPENAI_API_KEY   - Your OpenAI API key (server-side only, never sent to browser)
 
 # 4. Run database migrations
 pnpm db:push
@@ -97,7 +127,7 @@ pnpm dev
 
 ```bash
 pnpm test
-# 6 tests should pass (5 chat procedure + 1 auth logout)
+# 7 tests should pass (6 chat procedure + 1 auth logout)
 ```
 
 ---
