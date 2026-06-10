@@ -2,6 +2,8 @@
 
 > **Nova** — AI-powered customer support assistant for North Star Outdoor Co.
 
+**Live Demo:** https://devinxdavid.github.io/north-star-support-bot/
+
 A full-stack web application delivering a secure, conversational support experience powered by OpenAI on the backend. The AI key is **never exposed to the browser** — all LLM calls are made server-side through a tRPC procedure.
 
 ---
@@ -34,9 +36,8 @@ A full-stack web application delivering a secure, conversational support experie
 |---|---|
 | Frontend | React 19 + Vite + Tailwind CSS 4 |
 | Backend | Node.js + Express + tRPC 11 |
-| AI | OpenAI via server-side `invokeLLM` helper |
-| Database | MySQL / TiDB via Drizzle ORM |
-| Auth | Manus OAuth |
+| AI | OpenAI GPT (server-side only) |
+| Database | MySQL via Drizzle ORM |
 | Testing | Vitest (6 tests, all passing) |
 
 ---
@@ -67,7 +68,7 @@ shared/               <- Shared types & constants
 
 - Node.js 18+
 - pnpm (`npm install -g pnpm`)
-- A MySQL/TiDB database (free [TiDB Serverless](https://tidbcloud.com/) works)
+- A MySQL database
 
 ### Setup
 
@@ -80,11 +81,11 @@ git checkout source
 # 2. Install dependencies
 pnpm install
 
-# 3. Set required environment variables (ask project owner for values):
-#    DATABASE_URL        - MySQL/TiDB connection string
-#    JWT_SECRET          - Session signing secret
-#    BUILT_IN_FORGE_API_KEY  - OpenAI or Forge API key (server-side only)
-#    BUILT_IN_FORGE_API_URL  - API base URL (e.g. https://api.openai.com)
+# 3. Set required environment variables:
+#    DATABASE_URL            - MySQL connection string
+#    JWT_SECRET              - Session signing secret (any random string)
+#    OPENAI_API_KEY          - Your OpenAI API key (server-side only, never sent to browser)
+#    OPENAI_API_BASE_URL     - https://api.openai.com (or your proxy)
 
 # 4. Run database migrations
 pnpm db:push
