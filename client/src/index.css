@@ -1,0 +1,122 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+/* ─── North Star Brand Tokens ─────────────────────────────────────────────── */
+:root {
+  /* Pine (deep forest green) */
+  --pine-900: oklch(22% 0.07 155);
+  --pine-800: oklch(28% 0.09 155);
+  --pine-700: oklch(34% 0.11 155);
+  --pine-600: oklch(40% 0.12 155);
+  --pine-500: oklch(46% 0.13 155);
+  --pine-400: oklch(55% 0.12 155);
+  --pine-100: oklch(94% 0.04 155);
+  --pine-50:  oklch(97% 0.02 155);
+
+  /* Sand (warm beige) */
+  --sand-900: oklch(35% 0.05 80);
+  --sand-700: oklch(52% 0.07 80);
+  --sand-400: oklch(72% 0.08 80);
+  --sand-200: oklch(88% 0.05 80);
+  --sand-100: oklch(94% 0.03 80);
+  --sand-50:  oklch(97% 0.02 80);
+
+  /* Clay (warm terracotta) */
+  --clay-700: oklch(48% 0.12 40);
+  --clay-500: oklch(60% 0.14 40);
+  --clay-300: oklch(76% 0.10 40);
+  --clay-100: oklch(93% 0.04 40);
+
+  /* Semantic mappings */
+  --background:        var(--sand-50);
+  --foreground:        var(--pine-900);
+  --card:              oklch(100% 0 0);
+  --card-foreground:   var(--pine-900);
+  --popover:           oklch(100% 0 0);
+  --popover-foreground: var(--pine-900);
+  --primary:           var(--pine-700);
+  --primary-foreground: oklch(100% 0 0);
+  --secondary:         var(--sand-100);
+  --secondary-foreground: var(--pine-800);
+  --muted:             var(--sand-100);
+  --muted-foreground:  var(--sand-700);
+  --accent:            var(--clay-100);
+  --accent-foreground: var(--clay-700);
+  --destructive:       oklch(55% 0.22 25);
+  --destructive-foreground: oklch(100% 0 0);
+  --border:            var(--sand-200);
+  --input:             var(--sand-200);
+  --ring:              var(--pine-500);
+  --radius:            0.625rem;
+
+  /* Chat-specific tokens */
+  --chat-bg:           var(--sand-50);
+  --chat-header-bg:    var(--pine-800);
+  --chat-header-fg:    oklch(100% 0 0);
+  --bubble-bot-bg:     oklch(100% 0 0);
+  --bubble-bot-fg:     var(--pine-900);
+  --bubble-bot-border: var(--sand-200);
+  --bubble-user-bg:    var(--pine-700);
+  --bubble-user-fg:    oklch(100% 0 0);
+  --quick-reply-bg:    oklch(100% 0 0);
+  --quick-reply-fg:    var(--pine-700);
+  --quick-reply-border: var(--pine-400);
+  --quick-reply-hover-bg: var(--pine-50);
+}
+
+@theme inline {
+  --color-background:        var(--background);
+  --color-foreground:        var(--foreground);
+  --color-card:              var(--card);
+  --color-card-foreground:   var(--card-foreground);
+  --color-popover:           var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary:           var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary:         var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted:             var(--muted);
+  --color-muted-foreground:  var(--muted-foreground);
+  --color-accent:            var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive:       var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border:            var(--border);
+  --color-input:             var(--input);
+  --color-ring:              var(--ring);
+  --radius-sm:               calc(var(--radius) - 4px);
+  --radius-md:               calc(var(--radius) - 2px);
+  --radius-lg:               var(--radius);
+  --radius-xl:               calc(var(--radius) + 4px);
+  --font-sans:               "Inter", ui-sans-serif, system-ui, sans-serif;
+}
+
+/* ─── Base ────────────────────────────────────────────────────────────────── */
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+  }
+  .flex {
+    min-width: 0;
+    min-height: 0;
+  }
+}
+
+/* ─── Container ───────────────────────────────────────────────────────────── */
+.container {
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+@media (min-width: 640px)  { .container { max-width: 640px; } }
+@media (min-width: 768px)  { .container { max-width: 768px; } }
+@media (min-width: 1024px) { .container { max-width: 1024px; } }
+@media (min-width: 1280px) { .container { max-width: 1280px; } }
+@media (min-width: 1536px) { .container { max-width: 1536px; } }
