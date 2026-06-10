@@ -130,7 +130,7 @@ function handleOrderTracking(message) {
 
 function handleReturns() {
   conversationState = "main";
-  addMessage("bot", "Returns are accepted within 30 days for unused items in original packaging.\n\nStart here: northstaroutdoors.com/returns\n\nAnything else I can help with around the trailhead?");
+  addMessage("bot", "Returns are accepted within 30 days for unused items in original packaging.\n\nStart your return here: northstaroutdoor.com/returns\n\nAnything else I can help with?");
   renderQuickOptions();
 }
 
