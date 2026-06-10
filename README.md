@@ -21,12 +21,10 @@ A full-stack web application delivering a secure, conversational support experie
 
 ## Shipping Information
 
-| Method | Delivery Time | Cost |
-|---|---|---|
-| Standard Shipping | 3–5 business days | FREE over $75, otherwise $6.99 |
-| Expedited Shipping | 1–2 business days | $14.99 |
-| Overnight Shipping | Next business day | $29.99 (order by 1 PM ET) |
-| International (CA/MX) | 10–14 business days | $19.99 flat rate |
+| Method | Delivery Time |
+|---|---|
+| Standard Shipping | 3–5 business days |
+| Expedited Shipping | 1–2 business days |
 
 ---
 
